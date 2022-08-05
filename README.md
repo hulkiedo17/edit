@@ -10,7 +10,7 @@ Builds only on linux.
 
 To build and install you need type this:
 ```shell
-$ ./build.sh -r
+$ ./build.sh
 ```
 
 # Options
