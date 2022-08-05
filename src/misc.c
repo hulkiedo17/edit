@@ -32,8 +32,8 @@ void help(void)
 	printf("usage: editor [options]\n\n");
 
 	printf("[cli options]:\n");
-	printf("\t-h        - prints this help message\n");
-	printf("\t-v        - shows the program version\n\n");
+	printf("\t-h - prints this help message\n");
+	printf("\t-v - shows the program version\n\n");
 
 	printf("[program commands]:\n");
 	printf("\tquit   - quit from program\n");
