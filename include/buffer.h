@@ -18,8 +18,8 @@ typedef struct buffer
 buffer_t* create_list(void);
 void delete_list(buffer_t *list);
 void append_line(buffer_t *lines, const char *line);
-//void insert_after(buffer_t *lines, const char *line, size_t line_number);
-//void insert_before(buffer_t *lines, const char *line, size_t line_number);
+void insert_after(buffer_t *lines, const char *line, size_t line_number);
+void insert_before(buffer_t *lines, const char *line, size_t line_number);
 //void replace(buffer_t *lines, const char *line, size_t line_number);
 void delete_line(buffer_t *lines, size_t line_number);
 void delete_lines(buffer_t *lines);

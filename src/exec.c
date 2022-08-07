@@ -2,16 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
 #include "buffer.h"
 #include "command.h"
 #include "exec.h"
 #include "main.h"
 #include "io.h"
-
-#ifdef DEBUG
 #include "misc.h"
-#endif
 
 static void append_data(void)
 {
@@ -29,6 +25,60 @@ static void append_data(void)
 	free(line);
 }
 
+static void inserta_data(const char *number)
+{
+	if(!number)
+	{
+		printf("out of lines\n");
+		return;
+	}
+
+	size_t line_number = get_number(number);
+	if(line_number == 0)
+	{
+		printf("out of lines\n");
+		return;
+	}
+
+	char *line = NULL;
+	size_t len = 0;
+
+	if(getline(&line, &len, stdin) == -1)
+	{
+		printf("invalid input\n");
+		return;
+	}
+
+	insert_after(buffer_list, line, line_number);
+}
+
+static void insertb_data(const char *number)
+{
+	if(!number)
+	{
+		printf("out of lines\n");
+		return;
+	}
+
+	size_t line_number = get_number(number);
+	if(line_number == 0)
+	{
+		printf("out of lines\n");
+		return;
+	}
+
+	char *line = NULL;
+	size_t len = 0;
+
+	if(getline(&line, &len, stdin) == -1)
+	{
+		printf("invalid input\n");
+		return;
+	}
+
+	insert_before(buffer_list, line, line_number);
+}
+
 static void delete_data(const char *line)
 {
 	if(!line)
@@ -37,8 +87,8 @@ static void delete_data(const char *line)
 		return;
 	}
 
-	size_t line_number = strtoul(line, NULL, 10);
-	if(line_number == 0 || line_number == ULONG_MAX)
+	size_t line_number = get_number(line);
+	if(line_number == 0)
 	{
 		printf("out of lines\n");
 		return;
@@ -63,6 +113,10 @@ int execute(struct command *cmd)
 		append_data();
 	else if(strcmp(cmd->name, "delete") == 0)
 		delete_data(cmd->parameter1);
+	else if(strcmp(cmd->name, "inserta") == 0)
+		inserta_data(cmd->parameter1);
+	else if(strcmp(cmd->name, "insertb") == 0)
+		insertb_data(cmd->parameter1);
 	else if(strcmp(cmd->name, "print") == 0)
 		print_lines(buffer_list);
 	else if(strcmp(cmd->name, "write") == 0)

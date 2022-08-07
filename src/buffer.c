@@ -98,7 +98,7 @@ void append_line(buffer_t *lines, const char *line)
 	return;
 }
 
-/*void insert_after(buffer_t *lines, const char *line, size_t line_number)
+void insert_after(buffer_t *lines, const char *line, size_t line_number)
 {
 	if(!lines || !line)
 	{
@@ -133,17 +133,17 @@ void append_line(buffer_t *lines, const char *line)
 	struct line *prev = NULL;
 	struct line *head = lines->head;
 
-	while(head->next != NULL && head->line_number <= line_number)
+	while(head != NULL && head->line_number <= line_number)
 	{
 		prev = head;
 		head = head->next;
 		line_counter++;
 	}
 
-	if(head->next == NULL)
+	if(!head)
 	{
 		node->line_number = ++line_counter;
-		head->next = node;
+		prev->next = node;
 		lines->number_of_lines++;
 		return;
 	}
@@ -159,9 +159,9 @@ void append_line(buffer_t *lines, const char *line)
 		head->line_number++;
 		head = head->next;
 	}
-}*/
+}
 
-/*void insert_before(buffer_t *lines, const char *line, size_t line_number)
+void insert_before(buffer_t *lines, const char *line, size_t line_number)
 {
 	if(!lines || !line)
 	{
@@ -231,7 +231,7 @@ increase:
 		head->line_number++;
 		head = head->next;
 	}
-}*/
+}
 
 /*void replace(buffer_t *lines, const char *line, size_t line_number)
 {

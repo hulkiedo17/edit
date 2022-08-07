@@ -5,5 +5,6 @@ void p_err(const char* fmt, ...);
 int p_warn(const char *fmt, ...);
 void help(void);
 void version(void);
+size_t get_number(const char *line);
 
 #endif
