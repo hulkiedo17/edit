@@ -5,7 +5,6 @@
 struct line
 {
 	size_t line_number;
-	size_t line_size;
 	char *line;
 	struct line *next;
 };
@@ -27,7 +26,6 @@ void insert_before(const char *line, size_t line_number);
 void delete_line(size_t line_number);
 void delete_lines(void);
 void print_lines(void);
-
-//void replace(buffer_t *lines, const char *line, size_t line_number);
+void swap(char* line_num1, char* line_num2);
 
 #endif

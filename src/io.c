@@ -36,13 +36,13 @@ void write_lines(const char *filename)
 
 	while(head != NULL)
 	{
-		if(fwrite(head->line, head->line_size, 1, fp) != 1)
+		if(fwrite(head->line, strlen(head->line), 1, fp) != 1)
 		{
 			p_warn("warning: fwrite() failed\n");
 			fclose(fp);
 			return;
 		}
-		written += head->line_size;
+		written += strlen(head->line);
 		head = head->next;
 	}
 

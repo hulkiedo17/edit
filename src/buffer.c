@@ -29,7 +29,6 @@ static struct line* create_line(const char *line)
 	line_node->next = NULL;
 	line_node->line = strdup(line);
 	line_node->line_number = 0;
-	line_node->line_size = strlen(line);
 
 	return line_node;
 }
@@ -343,11 +342,142 @@ void print_lines(void)
 	while(head != NULL)
 	{
 #ifdef DEBUG
-		printf("(%zd, %zd) %s", head->line_number, head->line_size, head->line);
+		printf("(%4zd) %s", head->line_number, head->line);
 #else
 		printf("%s", head->line);
 #endif
 		head = head->next;
 	}
 }
+
+void swap(char* line_num1, char* line_num2)
+{
+	if(!line_num1 || !line_num2)
+	{
+#ifdef DEBUG
+		p_warn("warning: swap() - arguments is null\n");
+#endif
+		return;
+	}
+
+	size_t line_number1, line_number2;
+
+	line_number1 = get_number(line_num1);
+	line_number2 = get_number(line_num2);
+
+	if(line_number1 >= line_number2)
+	{
+		printf("out of lines\n");
+		return;
+	}
+
+	if(!buffer || !buffer->head)
+	{
+#ifdef DEBUG
+		p_warn("warning: swap() - buffer is empty\n");
+#endif
+		return;
+	}
+
+	if(line_number1 < 1 || line_number1 > buffer->number_of_lines)
+	{
+		printf("out of lines\n");
+		return;
+	}
+
+	if(line_number2 < 1 || line_number2 > buffer->number_of_lines)
+	{
+		printf("out of lines\n");
+		return;
+	}
+
+	struct line *temp1 = NULL;
+	struct line *temp2 = NULL;
+	struct line *head = NULL;
+
+	head = buffer->head;
+	while(head != NULL)
+	{
+		if(head->line_number == line_number1)
+		{
+			temp1 = head;
+		}
+		if(head->line_number == line_number2)
+		{
+			temp2 = head;
+			break;
+		}
+		head = head->next;
+	}
+
+	char *sline1 = NULL;
+	char *sline2 = NULL;
+
+	sline1 = strdup(temp1->line);
+	if(!sline1)
+		p_err("err: strdup() failed\n");
+
+	sline2 = strdup(temp2->line);
+	if(!sline2)
+		p_err("err: strdup() failed\n");
+
+	free(temp1->line);
+	free(temp2->line);
+
+	temp1->line = sline2;
+	temp2->line = sline1;
+}
+
+// replace() for future.
+/*void replace(const char *line, size_t line_number)
+{
+	if(!line)
+	{
+#ifdef DEBUG
+		p_warn("warning: replace() - argument is null\n");
+#endif
+		return;
+	}
+
+	if(!buffer || !buffer->head)
+	{
+#ifdef DEBUG
+		p_warn("warning: replace() - buffer is empty\n");
+#endif
+		return;
+	}
+
+	if(line_number < 1 || line_number > buffer->number_of_lines)
+	{
+		printf("out of lines\n");
+		return;
+	}
+
+	struct line *head = buffer->head;
+
+	if(head->line_number == line_number)
+	{
+		free(head->line);
+		head->line = strdup(line);
+		return;
+	}
+
+	while(head != NULL && head->line_number != line_number)
+	{
+		head = head->next;
+	}
+
+	if(!head)
+	{
+		printf("out of lines\n");
+		return;
+	}
+
+	if(head->line_number == line_number)
+	{
+		free(head->line);
+		head->line = strdup(line);
+		return;
+	}
+}*/
 

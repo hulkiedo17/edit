@@ -112,6 +112,7 @@ static void builtin_help(void)
 	printf("delete  [line] - delete the specified line\n");
 	printf("inserta [line] - insert after specified line\n");
 	printf("insertb [line] - insert before specified line\n");
+	printf("swap [line] [line] - swaps two lines\n");
 }
 
 static int execute(struct command *cmd)
@@ -128,6 +129,8 @@ static int execute(struct command *cmd)
 		inserta_data(cmd->parameter1);
 	else if(strcmp(cmd->name, "insertb") == 0)
 		insertb_data(cmd->parameter1);
+	else if(strcmp(cmd->name, "swap") == 0)
+		swap(cmd->parameter1, cmd->parameter2);
 	else if(strcmp(cmd->name, "print") == 0)
 		print_lines();
 	else if(strcmp(cmd->name, "write") == 0)

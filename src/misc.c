@@ -45,6 +45,7 @@ void help(void)
 	printf("\tdelete  [line] - delete the specified line\n");
 	printf("\tinserta [line] - insert after specified line\n");
 	printf("\tinsertb [line] - insert before specified line\n");
+	printf("\tswap [line] [line] - swaps two lines\n");
 }
 
 void version(void)
