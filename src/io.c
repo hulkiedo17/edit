@@ -2,30 +2,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "buffer.h"
 #include "misc.h"
 
-void write_lines(buffer_t *lines, const char *filename, const char *mode)
+#define NEEDED_BUFFER_DEFINITION
+#include "buffer.h"
+
+void write_lines(const char *filename)
 {
-	if(!lines || !filename || !mode)
+	if(!filename)
 	{
 #ifdef DEBUG
-		p_warn("warning: write_lines() - arguments is null\n");
+		p_warn("warning: write_lines() - argument is null\n");
 #endif
 		return;
 	}
 
-	FILE *fp = NULL;
-	struct line *head = lines->head;
 	size_t written = 0;
+	FILE *fp = NULL;
+	struct line *head = buffer->head;
 
 	if(!head)
 	{
-		printf("list is empty\n");
+		printf("buffer is empty\n");
 		return;
 	}
 
-	fp = fopen(filename, mode);
+	fp = fopen(filename, "w");
 	if(!fp)
 	{
 		printf("unable to open file\n");
@@ -34,8 +36,6 @@ void write_lines(buffer_t *lines, const char *filename, const char *mode)
 
 	while(head != NULL)
 	{
-		// TODO: make normal error check for i/o
-		// temporary solution for now:
 		if(fwrite(head->line, head->line_size, 1, fp) != 1)
 		{
 			p_warn("warning: fwrite() failed\n");
@@ -47,24 +47,24 @@ void write_lines(buffer_t *lines, const char *filename, const char *mode)
 	}
 
 	fclose(fp);
-	printf("written %zd bytes, %zd lines\n", written, lines->number_of_lines);
+	printf("written %zd bytes, %zd lines\n", written, buffer->number_of_lines);
 }
 
-void read_lines(buffer_t *lines, const char *filename)
+void read_lines(const char *filename)
 {
-	if(!lines || !filename)
+	if(!filename)
 	{
 #ifdef DEBUG
-		p_warn("warning: read_lines() - arguments is null\n");
+		p_warn("warning: read_lines() - argument is null\n");
 #endif
 		return;
 	}
 
-	FILE *fp = NULL;
-	char *line = NULL;
-	size_t size = 0;
 	size_t line_counter = 0;
 	size_t readed = 0;
+	size_t len = 0;
+	char *line = NULL;
+	FILE *fp = NULL;
 
 	fp = fopen(filename, "r");
 	if(!fp)
@@ -73,9 +73,9 @@ void read_lines(buffer_t *lines, const char *filename)
 		return;
 	}
 
-	while(getline(&line, &size, fp) != -1)
+	while(getline(&line, &len, fp) != -1)
 	{
-		append_line(lines, line);
+		append_line(line);
 
 		readed += strlen(line);
 		line_counter++;

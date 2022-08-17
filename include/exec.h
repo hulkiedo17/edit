@@ -5,6 +5,6 @@
 #define SUCCESS_EXECUTE 0
 #define QUIT_EXECUTE 1
 
-int execute(struct command *cmd);
+int execute_command(const char *line);
 
 #endif

@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "command.h"
+#include "parser.h"
 #include "misc.h"
 
 static struct command* create_cmd(void)
@@ -23,12 +23,7 @@ static struct command* create_cmd(void)
 static void delete_cmd(struct command *cmd)
 {
 	if(!cmd)
-	{
-#ifdef DEBUG
-		p_warn("warning: delete_cmd() - argument is null\n");
-#endif
 		return;
-	}
 
 	free(cmd->name);
 	free(cmd->parameter1);
@@ -36,7 +31,7 @@ static void delete_cmd(struct command *cmd)
 	free(cmd);
 }
 
-struct command* get_command(const char *line)
+struct command* parse_command(const char *line)
 {
 	if(!line)
 	{
@@ -50,6 +45,12 @@ struct command* get_command(const char *line)
 	char *tok = NULL;
 	struct command *cmd = NULL;
 
+	if(strcmp(line, "\n") == 0)
+	{
+		fprintf(stdout, "empty line\n");
+		return NULL;
+	}
+
 	sline = strdup(line);
 	if(!sline)
 		p_err("error: strdup() failed\n");
@@ -58,15 +59,13 @@ struct command* get_command(const char *line)
 	if(!cmd)
 	{
 		free(sline);
-		return NULL;
+		p_err("error: malloc() failed\n");
 	}
 	
 	// get name
 	tok = strtok(sline, " \t\n");
 	if(tok)
-	{
 		cmd->name = strdup(tok);
-	}
 	else
 	{
 		delete_cmd(cmd);
@@ -92,7 +91,7 @@ struct command* get_command(const char *line)
 	return cmd;
 }
 
-void delete_command(struct command *cmd)
+void free_command(struct command *cmd)
 {
 	delete_cmd(cmd);
 }

@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
-#include "command.h"
 #include "buffer.h"
 #include "exec.h"
 #include "misc.h"
@@ -10,9 +9,7 @@
 #define PROMPT(str) fprintf(stdout, str);	\
 	fflush(stdout)
 
-buffer_t *buffer_list = NULL;
-
-void parse_arguments(int argc, char **argv)
+static void parse_arguments(int argc, char **argv)
 {
 	int result;
 
@@ -31,47 +28,35 @@ void parse_arguments(int argc, char **argv)
 	}
 }
 
-void editor_loop(void)
+static void editor_loop(void)
 {
 	size_t size = 0;
 	char *line = NULL;
-	struct command *cmd = NULL;
 
 	PROMPT("> ");
-
 	while(getline(&line, &size, stdin) != -1)
 	{
-		cmd = get_command(line);
-		if(!cmd)
-		{
-			p_warn("parsing command failed");
-		}
-		else
-		{
-			int result = execute(cmd);
+		int result = execute_command(line);
 
-			if(result == QUIT_EXECUTE)
-				break;
-			else if(result == FAILED_EXECUTE)
-				p_warn("execution failed\n");
-		}
+		if(result == QUIT_EXECUTE)
+			break;
+		if(result == FAILED_EXECUTE)
+			p_warn("command failed\n");
 
-		delete_command(cmd);
 		PROMPT("> ");
 	}
 
 	free(line);
-	delete_command(cmd);
 }
 
 int main(int argc, char **argv)
 {
 	parse_arguments(argc, argv);
 
-	buffer_list = create_list();
+	init_list();
 
 	editor_loop();
 
-	delete_list(buffer_list);
+	delete_list();
 	return EXIT_SUCCESS;
 }

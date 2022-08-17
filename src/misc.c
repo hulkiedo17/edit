@@ -4,7 +4,7 @@
 #include <stdarg.h>
 #include <limits.h>
 
-static const char* const  program_version = "0.1";
+static const char* const  program_version = "0.2";
 
 void p_err(const char* fmt, ...)
 {
@@ -17,15 +17,13 @@ void p_err(const char* fmt, ...)
 	exit(EXIT_FAILURE);
 }
 
-int p_warn(const char *fmt, ...)
+void p_warn(const char *fmt, ...)
 {
 	va_list ap;
 	
 	va_start(ap, fmt);
 	vfprintf(stderr, fmt, ap);
 	va_end(ap);
-
-	return -1;
 }
 
 void help(void)
@@ -38,6 +36,7 @@ void help(void)
 
 	printf("[program commands]:\n");
 	printf("\tquit   - quit from program\n");
+	printf("\thelp   - prints help message\n");
 	printf("\tclear  - clean buffer\n");
 	printf("\tprint  - print buffer\n");
 	printf("\tappend - append data to buffer\n");
@@ -56,11 +55,22 @@ void version(void)
 size_t get_number(const char *line)
 {
 	if(!line)
+	{
+#ifdef DEBUG
+		p_warn("warning: get_number() - arguments is null\n");
+#endif
 		return 0;
+	}
 
 	size_t number = strtoul(line, NULL, 10);
+
 	if(number == 0 || number == ULONG_MAX)
+	{
+#ifdef DEBUG
+		p_warn("warning: get_number() - strtoul() failed\n");
+#endif
 		return 0;
+	}
 
 	return number;
 }

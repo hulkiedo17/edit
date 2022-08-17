@@ -1,6 +1,7 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
+#ifdef NEEDED_BUFFER_DEFINITION
 struct line
 {
 	size_t line_number;
@@ -15,14 +16,18 @@ typedef struct buffer
 	struct line *head;
 } buffer_t;
 
-buffer_t* create_list(void);
-void delete_list(buffer_t *list);
-void append_line(buffer_t *lines, const char *line);
-void insert_after(buffer_t *lines, const char *line, size_t line_number);
-void insert_before(buffer_t *lines, const char *line, size_t line_number);
+extern buffer_t *buffer;
+#endif
+
+void init_list(void);
+void delete_list(void);
+void append_line(const char *line);
+void insert_after(const char *line, size_t line_number);
+void insert_before(const char *line, size_t line_number);
+void delete_line(size_t line_number);
+void delete_lines(void);
+void print_lines(void);
+
 //void replace(buffer_t *lines, const char *line, size_t line_number);
-void delete_line(buffer_t *lines, size_t line_number);
-void delete_lines(buffer_t *lines);
-void print_lines(buffer_t *lines);
 
 #endif

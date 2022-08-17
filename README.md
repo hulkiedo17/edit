@@ -4,7 +4,7 @@ editor - lite version of line-oriented text editor
 
 # Build
 
-You need to build: make, cmake, GCC or Clang, bash.
+You need to build: meson, ninja, c compiler, bash.
 
 Builds only on linux.
 
@@ -16,3 +16,7 @@ $ ./build.sh
 # Options
 
 Check options with -h flag for build script (build.sh) and editor.
+
+# TODO
+
+commands: cut, copy, paste, swap

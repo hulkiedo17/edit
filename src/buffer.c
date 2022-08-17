@@ -3,8 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include "buffer.h"
 #include "misc.h"
+
+#define NEEDED_BUFFER_DEFINITION
+#include "buffer.h"
+
+buffer_t *buffer = NULL;
 
 static struct line* create_line(const char *line)
 {
@@ -30,41 +34,30 @@ static struct line* create_line(const char *line)
 	return line_node;
 }
 
-buffer_t* create_list(void)
+void init_list(void)
 {
-	buffer_t *lines = NULL;
-
-	lines = malloc(sizeof(buffer_t));
-	if(!lines)
+	buffer = malloc(sizeof(buffer_t));
+	if(!buffer)
 		p_err("error: malloc() failed\n");
 
-	lines->head = NULL;
-	lines->number_of_lines = 0;
-
-	return lines;
+	buffer->head = NULL;
+	buffer->number_of_lines = 0;
 }
 
-void delete_list(buffer_t *list)
+void delete_list(void)
 {
-	if(!list)
-	{
-#ifdef DEBUG
-		p_warn("warning: delete_list() - argument is null\n");
-#endif
-		return;
-	}
+	delete_lines();
 
-	delete_lines(list);
-
-	free(list);
+	free(buffer);
+	buffer = NULL;
 }
 
-void append_line(buffer_t *lines, const char *line)
+void append_line(const char *line)
 {
-	if(!lines || !line)
+	if(!buffer || !line)
 	{
 #ifdef DEBUG
-		p_warn("warning: append_line() - arguments is null\n");
+		p_warn("warning: append_line() - arguments or buffer is null\n");
 #endif
 		return;
 	}
@@ -76,15 +69,15 @@ void append_line(buffer_t *lines, const char *line)
 	if(!node)
 		return;
 
-	if(!lines->head)
+	if(!buffer->head)
 	{
 		node->line_number = line_counter;
-		lines->head = node;
-		lines->number_of_lines++;
+		buffer->head = node;
+		buffer->number_of_lines++;
 		return;
 	}
 
-	struct line *head = lines->head;
+	struct line *head = buffer->head;
 
 	while(head->next != NULL)
 	{
@@ -94,21 +87,20 @@ void append_line(buffer_t *lines, const char *line)
 
 	node->line_number = ++line_counter;
 	head->next = node;
-	lines->number_of_lines++;
-	return;
+	buffer->number_of_lines++;
 }
 
-void insert_after(buffer_t *lines, const char *line, size_t line_number)
+void insert_after(const char *line, size_t line_number)
 {
-	if(!lines || !line)
+	if(!buffer || !line)
 	{
 #ifdef DEBUG
-		p_warn("warning: insert_after() - arguments is null\n");
+		p_warn("warning: insert_after() - arguments or buffer is null\n");
 #endif
 		return;
 	}
 
-	if(line_number < 1 || line_number > lines->number_of_lines)
+	if(line_number < 1 || line_number > buffer->number_of_lines)
 	{
 		printf("out of lines\n");
 		return;
@@ -122,16 +114,16 @@ void insert_after(buffer_t *lines, const char *line, size_t line_number)
 
 	size_t line_counter = 1;
 
-	if(!lines->head)
+	if(!buffer->head)
 	{
 		node->line_number = line_counter;
-		lines->head = node;
-		lines->number_of_lines++;
+		buffer->head = node;
+		buffer->number_of_lines++;
 		return;
 	}
 
 	struct line *prev = NULL;
-	struct line *head = lines->head;
+	struct line *head = buffer->head;
 
 	while(head != NULL && head->line_number <= line_number)
 	{
@@ -144,14 +136,14 @@ void insert_after(buffer_t *lines, const char *line, size_t line_number)
 	{
 		node->line_number = ++line_counter;
 		prev->next = node;
-		lines->number_of_lines++;
+		buffer->number_of_lines++;
 		return;
 	}
 
 	node->line_number = line_counter;
 	prev->next = node;
 	node->next = head;
-	lines->number_of_lines++;
+	buffer->number_of_lines++;
 
 	// increase others line numbers after inserted line
 	while(head != NULL)
@@ -161,17 +153,17 @@ void insert_after(buffer_t *lines, const char *line, size_t line_number)
 	}
 }
 
-void insert_before(buffer_t *lines, const char *line, size_t line_number)
+void insert_before(const char *line, size_t line_number)
 {
-	if(!lines || !line)
+	if(!buffer || !line)
 	{
 #ifdef DEBUG
-		p_warn("warning: insert_before() - arguments is null\n");
+		p_warn("warning: insert_before() - arguments or buffer is null\n");
 #endif
 		return;
 	}
 
-	if(line_number < 1 || line_number > lines->number_of_lines)
+	if(line_number < 1 || line_number > buffer->number_of_lines)
 	{
 		printf("out of lines\n");
 		return;
@@ -185,21 +177,21 @@ void insert_before(buffer_t *lines, const char *line, size_t line_number)
 
 	size_t line_counter = 1;
 
-	if(!lines->head)
+	if(!buffer->head)
 	{
 		node->line_number = line_counter;
-		lines->head = node;
-		lines->number_of_lines++;
+		buffer->head = node;
+		buffer->number_of_lines++;
 		return;
 	}
 
 	struct line *prev = NULL;
-	struct line *head = lines->head;
+	struct line *head = buffer->head;
 
 	if(line_number == 1)
 	{
 		node->line_number = line_counter;
-		lines->head = node;
+		buffer->head = node;
 		node->next = head;
 		goto increase;
 	}
@@ -215,14 +207,14 @@ void insert_before(buffer_t *lines, const char *line, size_t line_number)
 	{
 		node->line_number = ++line_counter;
 		prev->next = node;
-		lines->number_of_lines++;
+		buffer->number_of_lines++;
 		return;
 	}
 
 	node->line_number = line_counter;
 	prev->next = node;
 	node->next = head;
-	lines->number_of_lines++;
+	buffer->number_of_lines++;
 
 	// increase others line numbers after inserted line
 increase:
@@ -233,95 +225,32 @@ increase:
 	}
 }
 
-/*void replace(buffer_t *lines, const char *line, size_t line_number)
+void delete_line(size_t line_number)
 {
-	if(!lines || !line)
+	if(!buffer || !buffer->head)
 	{
 #ifdef DEBUG
-		p_warn("warning: replace() - arguments is null\n");
+		p_warn("warning: delete_line() - buffer is empty\n");
 #endif
 		return;
 	}
 
-	if(!lines->head)
-	{
-#ifdef DEBUG
-		p_warn("warning: replace() - list is empty\n");
-#endif
-		return;
-	}
-
-	if(line_number < 1 || line_number > lines->number_of_lines)
-	{
-		printf("out of lines\n");
-		return;
-	}
-
-	struct line *head = lines->head;
-
-	if(head->line_number == line_number)
-	{
-		free(head->line);
-		head->line = strdup(line);
-		head->line_size = strlen(line);
-		return;
-	}
-
-	while(head != NULL && head->line_number != line_number)
-	{
-		head = head->next;
-	}
-
-	if(!head)
-	{
-		printf("out of lines\n");
-		return;
-	}
-
-	if(head->line_number == line_number)
-	{
-		free(head->line);
-		head->line = strdup(line);
-		head->line_size = strlen(line);
-		return;
-	}
-}
-*/
-
-void delete_line(buffer_t *lines, size_t line_number)
-{
-	if(!lines)
-	{
-#ifdef DEBUG
-		p_warn("warning: delete_line() - argument is null\n");
-#endif
-		return;
-	}
-
-	if(!lines->head)
-	{
-#ifdef DEBUG
-		p_warn("warning: delete_line() - list is empty\n");
-#endif
-		return;
-	}
-
-	if(line_number < 1 || line_number > lines->number_of_lines)
+	if(line_number < 1 || line_number > buffer->number_of_lines)
 	{
 		printf("out of lines\n");
 		return;
 	}
 
 	struct line *prev = NULL;
-	struct line *head = lines->head;
+	struct line *head = buffer->head;
 
 	if(head->line_number == line_number)
 	{
-		lines->head = head->next;
+		buffer->head = head->next;
 
 		free(head->line);
 		free(head);
-		lines->number_of_lines--;
+		buffer->number_of_lines--;
 		goto decrease_all;
 	}
 
@@ -343,12 +272,12 @@ void delete_line(buffer_t *lines, size_t line_number)
 
 		free(head->line);
 		free(head);
-		lines->number_of_lines--;
+		buffer->number_of_lines--;
 		goto decrease_last;
 	}
 
 decrease_all:
-	head = lines->head;
+	head = buffer->head;
 	if(!head)
 		return;
 
@@ -369,58 +298,47 @@ decrease_last:
 		head->line_number--;
 		head = head->next;
 	}
-	return;
 }
 
-void delete_lines(buffer_t *lines)
+void delete_lines(void)
 {
-	if(!lines)
+	if(!buffer)
 	{
 #ifdef DEBUG
-		p_warn("warning: delete_lines() - argument is null\n");
+		p_warn("warning: delete_lines() - buffer is null\n");
 #endif
 		return;
 	}
 
-	if(!lines->head)
+	if(!buffer->head)
 	{
-		lines->number_of_lines = 0;
+		buffer->number_of_lines = 0;
 		return;
 	}
 
 	struct line *temp = NULL;
-	struct line *head = lines->head;
+	struct line *head = buffer->head;
 
 	while(head != NULL)
 	{
 		temp = head;
 		head = head->next;
-		lines->head = head;
+		buffer->head = head;
 
 		free(temp->line);
 		free(temp);
 	}
 
-	lines->head = NULL;
-	lines->number_of_lines = 0;
-	return;
+	buffer->head = NULL;
+	buffer->number_of_lines = 0;
 }
 
-void print_lines(buffer_t *lines)
+void print_lines(void)
 {
-	if(!lines)
-	{
-		printf("buffer is empty\n");
+	if(!buffer || !buffer->head)
 		return;
-	}
 
-	if(!lines->head)
-	{
-		printf("buffer is empty\n");
-		return;
-	}
-
-	struct line *head = lines->head;
+	struct line *head = buffer->head;
 
 	while(head != NULL)
 	{
@@ -431,6 +349,5 @@ void print_lines(buffer_t *lines)
 #endif
 		head = head->next;
 	}
-
-	return;
 }
+

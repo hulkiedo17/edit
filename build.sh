@@ -1,56 +1,45 @@
 #!/usr/bin/env bash
 
-prefix=/usr/local/
-
-debug() {
-	mkdir -p build
-	cd build || exit
-
-	cmake "-DCMAKE_BUILD_TYPE=Debug" "-DCMAKE_INSTALL_PREFIX=$prefix" ".."
-	make
-	sudo make install
+compile_debug() {
+	meson setup build "-Dbuildtype=debug"
+	meson compile -C build
 }
 
-release() {
-	mkdir -p build
-	cd build || exit
+compile_release() {
+	meson setup build "-Dbuildtype=release"
+	meson compile -C build
+}
 
-	cmake "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=$prefix" ".."
-	make
-	sudo make install
+install() {
+	meson install -C build
 }
 
 clean() {
-	if [ -d "build" ]; then
-		cd build || exit
-		make clean
-		exit 0
-	else
-		echo "build directory does not exists"
-		exit 0
-	fi
+	rm -rf build
 }
 
-help_msg() {
+help() {
 	printf "usage: ./build.sh [options...]\n\n"
 	printf "options:\n"
-	printf "\t-d - compile and install debug version\n"
-	printf "\t-r - compile and install release version\n"
-	printf "\t-c - delete compiled object files\n"
-	printf "\t-h - prints help message\n"
+	printf "\t-r - compile release\n"
+	printf "\t-d - compile debug\n"
+	printf "\t-i - install\n"
+	printf "\t-c - clean\n"
+	printf "\t-h - prints this help message\n"
 }
 
 if [ -z "$*" ]; then
-	release
+	compile_release
 	exit 0
 fi
 
-while getopts "drch" opt; do
+while getopts "rdich" opt; do
 	case $opt in
-		d) debug ;;
-		r) release ;;
+		r) compile_release ;;
+		d) compile_debug ;;
+		i) install ;;
 		c) clean ;;
-		h) help_msg ;;
+		h) help ;;
 		*) echo "unknown option" ;;
 	esac
 done

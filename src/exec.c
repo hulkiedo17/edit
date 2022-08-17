@@ -3,10 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "buffer.h"
-#include "command.h"
-#include "exec.h"
-#include "main.h"
+#include "parser.h"
 #include "io.h"
+#include "exec.h"
 #include "misc.h"
 
 static void append_data(void)
@@ -19,7 +18,7 @@ static void append_data(void)
 		if(strcmp(line, ".\n") == 0)
 			break;
 
-		append_line(buffer_list, line);
+		append_line(line);
 	}
 
 	free(line);
@@ -49,7 +48,9 @@ static void inserta_data(const char *number)
 		return;
 	}
 
-	insert_after(buffer_list, line, line_number);
+	insert_after(line, line_number);
+
+	free(line);
 }
 
 static void insertb_data(const char *number)
@@ -76,7 +77,9 @@ static void insertb_data(const char *number)
 		return;
 	}
 
-	insert_before(buffer_list, line, line_number);
+	insert_before(line, line_number);
+
+	free(line);
 }
 
 static void delete_data(const char *line)
@@ -94,20 +97,28 @@ static void delete_data(const char *line)
 		return;
 	}
 
-	delete_line(buffer_list, line_number);
+	delete_line(line_number);
 }
 
-int execute(struct command *cmd)
+static void builtin_help(void)
 {
-	if(!cmd)
-	{
-#ifdef DEBUG
-		p_warn("warning: execute() - argument is null\n");
-#endif
-		return FAILED_EXECUTE;
-	}
+	printf("quit   - quit from program\n");
+	printf("help   - prints this help message\n");
+	printf("clear  - clean buffer\n");
+	printf("print  - print buffer\n");
+	printf("append - append data to buffer\n");
+	printf("write   [file] - safe buffer to file\n");
+	printf("read    [file] - read file to buffer\n");
+	printf("delete  [line] - delete the specified line\n");
+	printf("inserta [line] - insert after specified line\n");
+	printf("insertb [line] - insert before specified line\n");
+}
 
-	if(strcmp(cmd->name, "quit") == 0)
+static int execute(struct command *cmd)
+{
+	if(cmd == NULL)
+		return SUCCESS_EXECUTE;
+	else if(strcmp(cmd->name, "quit") == 0)
 		return QUIT_EXECUTE;
 	else if(strcmp(cmd->name, "append") == 0)
 		append_data();
@@ -118,15 +129,31 @@ int execute(struct command *cmd)
 	else if(strcmp(cmd->name, "insertb") == 0)
 		insertb_data(cmd->parameter1);
 	else if(strcmp(cmd->name, "print") == 0)
-		print_lines(buffer_list);
+		print_lines();
 	else if(strcmp(cmd->name, "write") == 0)
-		write_lines(buffer_list, cmd->parameter1, "w");
+		write_lines(cmd->parameter1);
 	else if(strcmp(cmd->name, "read") == 0)
-		read_lines(buffer_list, cmd->parameter1);
+		read_lines(cmd->parameter1);
 	else if(strcmp(cmd->name, "clear") == 0)
-		delete_lines(buffer_list);
+		delete_lines();
+	else if(strcmp(cmd->name, "help") == 0)
+		builtin_help();
 	else
 		printf("unknown command: %s\n", cmd->name);
 
 	return SUCCESS_EXECUTE;
+}
+
+int execute_command(const char *line)
+{
+	int result = FAILED_EXECUTE;
+	struct command *cmd = NULL;
+
+	cmd = parse_command(line);
+
+	result = execute(cmd);
+
+	free_command(cmd);
+
+	return result;
 }
