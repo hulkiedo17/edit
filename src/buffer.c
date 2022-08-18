@@ -133,7 +133,7 @@ void insert_after(const char *line, size_t line_number)
 
 	if(!head)
 	{
-		node->line_number = ++line_counter;
+		node->line_number = line_counter;
 		prev->next = node;
 		buffer->number_of_lines++;
 		return;
@@ -191,6 +191,7 @@ void insert_before(const char *line, size_t line_number)
 	{
 		node->line_number = line_counter;
 		buffer->head = node;
+		buffer->number_of_lines++;
 		node->next = head;
 		goto increase;
 	}
