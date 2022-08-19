@@ -46,10 +46,7 @@ struct command* parse_command(const char *line)
 	struct command *cmd = NULL;
 
 	if(strcmp(line, "\n") == 0)
-	{
-		fprintf(stdout, "empty line\n");
 		return NULL;
-	}
 
 	sline = strdup(line);
 	if(!sline)

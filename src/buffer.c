@@ -336,7 +336,10 @@ void delete_lines(void)
 void print_lines(void)
 {
 	if(!buffer || !buffer->head)
+	{
+		printf("buffer is empty\n");
 		return;
+	}
 
 	struct line *head = buffer->head;
 

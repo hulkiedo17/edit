@@ -35,17 +35,17 @@ void help(void)
 	printf("\t-v - shows the program version\n\n");
 
 	printf("[program commands]:\n");
-	printf("\tquit   - quit from program\n");
-	printf("\thelp   - prints help message\n");
-	printf("\tclear  - clean buffer\n");
-	printf("\tprint  - print buffer\n");
-	printf("\tappend - append data to buffer\n");
-	printf("\twrite   [file] - safe buffer to file\n");
-	printf("\tread    [file] - read file to buffer\n");
-	printf("\tdelete  [line] - delete the specified line\n");
-	printf("\tinserta [line] - insert after specified line\n");
-	printf("\tinsertb [line] - insert before specified line\n");
-	printf("\tswap [line] [line] - swaps two lines\n");
+	printf("\tq - quit from program\n");
+	printf("\th - prints short help message\n");
+	printf("\tc - clean buffer\n");
+	printf("\tp - print buffer\n");
+	printf("\ta - append data to buffer\n");
+	printf("\tw  [file] - safe buffer to file\n");
+	printf("\tr  [file] - read file to buffer\n");
+	printf("\td  [line] - delete the specified line\n");
+	printf("\tia [line] - insert after specified line\n");
+	printf("\tib [line] - insert before specified line\n");
+	printf("\ts  [line] [line] - swaps two lines\n");
 }
 
 void version(void)

@@ -102,44 +102,44 @@ static void delete_data(const char *line)
 
 static void builtin_help(void)
 {
-	printf("quit   - quit from program\n");
-	printf("help   - prints this help message\n");
-	printf("clear  - clean buffer\n");
-	printf("print  - print buffer\n");
-	printf("append - append data to buffer\n");
-	printf("write   [file] - safe buffer to file\n");
-	printf("read    [file] - read file to buffer\n");
-	printf("delete  [line] - delete the specified line\n");
-	printf("inserta [line] - insert after specified line\n");
-	printf("insertb [line] - insert before specified line\n");
-	printf("swap [line] [line] - swaps two lines\n");
+	printf("q - quit from program\n");
+	printf("h - prints this help message\n");
+	printf("c - clean buffer\n");
+	printf("p - print buffer\n");
+	printf("a - append data to buffer\n");
+	printf("w  [file] - safe buffer to file\n");
+	printf("r  [file] - read file to buffer\n");
+	printf("d  [line] - delete the specified line\n");
+	printf("ia [line] - insert after specified line\n");
+	printf("ib [line] - insert before specified line\n");
+	printf("s  [line] [line] - swaps two lines\n");
 }
 
 static int execute(struct command *cmd)
 {
 	if(cmd == NULL)
 		return SUCCESS_EXECUTE;
-	else if(strcmp(cmd->name, "quit") == 0)
+	else if(strcmp(cmd->name, "q") == 0)
 		return QUIT_EXECUTE;
-	else if(strcmp(cmd->name, "append") == 0)
+	else if(strcmp(cmd->name, "a") == 0)
 		append_data();
-	else if(strcmp(cmd->name, "delete") == 0)
+	else if(strcmp(cmd->name, "d") == 0)
 		delete_data(cmd->parameter1);
-	else if(strcmp(cmd->name, "inserta") == 0)
+	else if(strcmp(cmd->name, "ia") == 0)
 		inserta_data(cmd->parameter1);
-	else if(strcmp(cmd->name, "insertb") == 0)
+	else if(strcmp(cmd->name, "ib") == 0)
 		insertb_data(cmd->parameter1);
-	else if(strcmp(cmd->name, "swap") == 0)
+	else if(strcmp(cmd->name, "s") == 0)
 		swap(cmd->parameter1, cmd->parameter2);
-	else if(strcmp(cmd->name, "print") == 0)
+	else if(strcmp(cmd->name, "p") == 0)
 		print_lines();
-	else if(strcmp(cmd->name, "write") == 0)
+	else if(strcmp(cmd->name, "w") == 0)
 		write_lines(cmd->parameter1);
-	else if(strcmp(cmd->name, "read") == 0)
+	else if(strcmp(cmd->name, "r") == 0)
 		read_lines(cmd->parameter1);
-	else if(strcmp(cmd->name, "clear") == 0)
+	else if(strcmp(cmd->name, "c") == 0)
 		delete_lines();
-	else if(strcmp(cmd->name, "help") == 0)
+	else if(strcmp(cmd->name, "h") == 0)
 		builtin_help();
 	else
 		printf("unknown command: %s\n", cmd->name);
