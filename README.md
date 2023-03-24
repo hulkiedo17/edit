@@ -1,6 +1,6 @@
 # What is it
 
-editor - lite version of line-oriented text editor
+edit - lite version of line-oriented text editor
 
 # Build
 
@@ -19,4 +19,8 @@ Check options with -h flag for build script (build.sh) and editor.
 
 # TODO
 
-commands: cut, copy, paste, swap
+commands:
+- [ ] - cut
+- [ ] - copy
+- [ ] - paste
+- [ ] - swap

@@ -11,7 +11,7 @@ compile_release() {
 }
 
 install() {
-	meson install -C build
+	sudo meson install -C build
 }
 
 clean() {

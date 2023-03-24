@@ -4,7 +4,7 @@
 #include <stdarg.h>
 #include <limits.h>
 
-static const char* const  program_version = "0.2";
+static const char* const  program_version = "0.3";
 
 void p_err(const char* fmt, ...)
 {
@@ -28,7 +28,7 @@ void p_warn(const char *fmt, ...)
 
 void help(void)
 {
-	printf("usage: editor [options]\n\n");
+	printf("usage: edit [options]\n\n");
 
 	printf("[cli options]:\n");
 	printf("\t-h - prints this help message\n");
@@ -50,7 +50,7 @@ void help(void)
 
 void version(void)
 {
-	printf("editor version - v%s\n", program_version);
+	printf("edit version - v%s\n", program_version);
 }
 
 size_t get_number(const char *line)

@@ -1,4 +1,4 @@
-project('editor', 'c',
+project('edit', 'c',
 	version : '0.1',
 	license : 'GPL-3.0-only',
 	meson_version : '>=0.60.0')
@@ -38,7 +38,7 @@ endif
 incdir = include_directories('include')
 src = ['src/buffer.c', 'src/parser.c', 'src/exec.c', 'src/io.c', 'src/main.c', 'src/misc.c']
 
-executable('editor',
+executable('edit',
 	sources : src,
 	include_directories : incdir,
 	c_args : args,
